@@ -6,12 +6,14 @@ class GameFieldObjectType(Enum):
     SNAKE = 1
     FOOD = 2
     HEAD = 3
+
 class Direction(Enum):
     UP = 0
     DOWN = 1
     LEFT = 2
     RIGHT = 3
     NONE = 4
+
 class GameFieldObject:
     def __init__(self, x, y, color, typ, direction):
         self.x = x
@@ -19,70 +21,72 @@ class GameFieldObject:
         self.color = color
         self.typ = typ
         self.direction = direction
-gameField = [
-    [
-        GameFieldObject(x, y, "black", GameFieldObjectType.EMPTY, Direction.NONE)
-        for x in range(30)
-    ]
-    for y in range(24)
-]
-playerDirection = Direction.NONE
-gameField[10][10] = GameFieldObject(10, 15, "red", GameFieldObjectType.HEAD, Direction.RIGHT)
-gameField[9][10] = GameFieldObject(10, 15, "yellow", GameFieldObjectType.SNAKE, Direction.RIGHT)
-gameField[8][10] = GameFieldObject(10, 15, "yellow", GameFieldObjectType.SNAKE, Direction.RIGHT)
 
-pygame.init()
-info = pygame.display.Info()
+playerDirection = Direction.RIGHT
 
-screen = pygame.display.set_mode((1200, 780))#, pygame.SCALED)
-pygame.display.set_caption("Snake")
-pygame.mouse.set_visible(True)
-
-clock = pygame.time.Clock()
-running = True
-dt = 0
-
-while running:
-    # poll for events
-    # pygame.QUIT event means the user clicked X to close your window
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-
-    # fill the screen with a color to wipe away anything from last frame
-    screen.fill("black")
-    pygame.draw.rect(screen, "cyan", (0, 0, info.current_w, 60), 0)
-
-    for x in range(len(gameField)):
-        for y in range(len(gameField[0])):
-            if gameField[x][y] == 1:
-                pass
-    for x in range(len(gameField)):
-        for y in range(len(gameField[0])):
-            if gameField[x][y].typ == GameFieldObjectType.EMPTY:
-                pygame.draw.rect(screen, "black", (x * 40, y * 40 + 60, 40, 40), 0)
-            if gameField[x][y].typ == GameFieldObjectType.HEAD:
-                pygame.draw.rect(screen, gameField[x][y].color, (x * 40, y * 40 + 60, 40, 40), 0)
-            if gameField[x][y].typ == GameFieldObjectType.SNAKE:
-                pygame.draw.rect(screen, gameField[x][y].color, (x * 40, y * 40 + 60, 40, 40), 0)
-
+def handle_input():
+    global playerDirection
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_ESCAPE]:
-        running = False
-    if keys[pygame.K_w]:
+    if keys[pygame.K_w] and playerDirection != Direction.DOWN:
         playerDirection = Direction.UP
-    if keys[pygame.K_s]:
+    elif keys[pygame.K_s] and playerDirection != Direction.UP:
         playerDirection = Direction.DOWN
-    if keys[pygame.K_a]:
+    elif keys[pygame.K_a] and playerDirection != Direction.RIGHT:
         playerDirection = Direction.LEFT
-    if keys[pygame.K_d]:
+    elif keys[pygame.K_d] and playerDirection != Direction.LEFT:
         playerDirection = Direction.RIGHT
 
-    # flip() the display to put your work on screen
-    pygame.display.flip()
+def update_game_logic(gameField):
+    #  LOGIK HINZUFÜGEN!!!
+    print(f"Direction: {playerDirection}")
 
-    # limits FPS to 60
-    # dt is delta time in seconds since last frame, used for framerate-independent physics.
-    dt = clock.tick(1) / 1000
+def main():
+    global playerDirection
+    pygame.init()
+    screen = pygame.display.set_mode((1200, 780))
+    pygame.display.set_caption("Snake")
+    pygame.mouse.set_visible(True)
 
-pygame.quit()
+    gameField = [
+        [GameFieldObject(x, y, "black", GameFieldObjectType.EMPTY, Direction.NONE) for x in range(30)]
+        for y in range(24)
+    ]
+    gameField[10][10] = GameFieldObject(10, 15, "red", GameFieldObjectType.HEAD, Direction.RIGHT)
+    gameField[9][10] = GameFieldObject(10, 15, "yellow", GameFieldObjectType.SNAKE, Direction.RIGHT)
+    gameField[8][10] = GameFieldObject(10, 15, "yellow", GameFieldObjectType.SNAKE, Direction.RIGHT)
+
+    clock = pygame.time.Clock()
+    running = True
+
+    logic_timer = 0
+    logic_interval = 1.0  # 1x pro Sekunde
+
+    while running:
+        dt = clock.tick(60) / 1000  # 60 FPS
+        logic_timer += dt
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+
+        handle_input()  # Läuft mit 60 FPS
+
+        if logic_timer >= logic_interval:
+            update_game_logic(gameField)
+            logic_timer = 0  # Reset Timer
+
+        # Fenster füllen
+        screen.fill("black")
+        pygame.draw.rect(screen, "cyan", (0, 0, 1200, 60), 0)
+        for x in range(len(gameField)):
+            for y in range(len(gameField[0])):
+                obj = gameField[x][y]
+                if obj.typ != GameFieldObjectType.EMPTY:
+                    pygame.draw.rect(screen, obj.color, (x * 40, y * 40 + 60, 40, 40), 0)
+
+        pygame.display.flip()
+
+    pygame.quit()
+
+if __name__ == "__main__":
+    main()
