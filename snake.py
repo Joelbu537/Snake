@@ -15,10 +15,9 @@ class Direction(Enum):
     NONE = 4
 
 class GameFieldObject:
-    def __init__(self, x, y, color, typ, direction):
+    def __init__(self, x, y, typ, direction):
         self.x = x
         self.y = y
-        self.color = color
         self.typ = typ
         self.direction = direction
 
@@ -48,18 +47,18 @@ def main():
     pygame.mouse.set_visible(True)
 
     gameField = [
-        [GameFieldObject(x, y, "black", GameFieldObjectType.EMPTY, Direction.NONE) for x in range(30)]
+        [GameFieldObject(x, y, GameFieldObjectType.EMPTY, Direction.NONE) for x in range(30)]
         for y in range(24)
     ]
-    gameField[10][10] = GameFieldObject(10, 15, "red", GameFieldObjectType.HEAD, Direction.RIGHT)
-    gameField[9][10] = GameFieldObject(10, 15, "yellow", GameFieldObjectType.SNAKE, Direction.RIGHT)
-    gameField[8][10] = GameFieldObject(10, 15, "yellow", GameFieldObjectType.SNAKE, Direction.RIGHT)
+    gameField[10][10] = GameFieldObject(10, 15,  GameFieldObjectType.HEAD, Direction.RIGHT)
+    gameField[9][10] = GameFieldObject(10, 15,  GameFieldObjectType.SNAKE, Direction.RIGHT)
+    gameField[8][10] = GameFieldObject(10, 15,  GameFieldObjectType.SNAKE, Direction.RIGHT)
 
     clock = pygame.time.Clock()
     running = True
 
     logic_timer = 0
-    logic_interval = 1.0  # 1x pro Sekunde
+    logic_interval = 1.0  # Updates/Sekunde, vielleicht 90° Parabel oder so?
 
     while running:
         dt = clock.tick(60) / 1000  # 60 FPS
@@ -80,9 +79,8 @@ def main():
         pygame.draw.rect(screen, "cyan", (0, 0, 1200, 60), 0)
         for x in range(len(gameField)):
             for y in range(len(gameField[0])):
-                obj = gameField[x][y]
-                if obj.typ != GameFieldObjectType.EMPTY:
-                    pygame.draw.rect(screen, obj.color, (x * 40, y * 40 + 60, 40, 40), 0)
+                field = gameField[x][y]
+                # Drawlogik bauen
 
         pygame.display.flip()
 
