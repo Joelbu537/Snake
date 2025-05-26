@@ -22,12 +22,18 @@ class GameFieldObject:
         self.typ = typ
         self.direction = direction
 
-class FoodCoordinates:
+class Coordinates:
     def __init__(self, x, y):
         self.x = x
         self.y = y
 
+class SnakePosition:
+    def __init__(self, coordinates, rotation):
+        self.coordinates = coordinates
+        self.rotation = rotation
+
 playerDirection = Direction.RIGHT
+snake = [SnakePosition(Coordinates(10, 10), Direction.RIGHT), SnakePosition(Coordinates(9, 10),Direction.RIGHT)]
 gameField = [
     [GameFieldObject(x, y, GameFieldObjectType.EMPTY, Direction.NONE) for x in range(30)]
     for y in range(24)
@@ -39,7 +45,7 @@ gameField[8][10] = GameFieldObject(10, 15, GameFieldObjectType.SNAKE, Direction.
 def new_food():
     is_valid = False
     while not is_valid:
-        temp_coords = FoodCoordinates(random.randint(0, 29), random.randint(0, 23))
+        temp_coords = Coordinates(random.randint(0, 29), random.randint(0, 23))
         if gameField[temp_coords.x][temp_coords.y].typ ==  GameFieldObjectType.EMPTY:
             print("Food set to " + str(temp_coords.x) + " " + str(temp_coords.y))
             gameField[temp_coords.x][temp_coords.y].typ = GameFieldObjectType.FOOD
