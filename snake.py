@@ -93,11 +93,9 @@ def update_game_logic(gameField):
     head_position = Coordinates(snake[0].coordinates.x + vector.x, snake[0].coordinates.y + vector.y)
     if head_position.x < 0 or head_position.x >= 30 or head_position.y < 0 or head_position >= 24:
         alive = False
-        break;
     for i in range(1, len(snake), 1):
         if snake[i].coordinates == head_position:
             alive = False
-            break;
     print(f"Direction: {playerDirection}")
 
 
@@ -141,6 +139,8 @@ def main():
                     pygame.draw.rect(screen, "red", (x * 40, y * 40 + 60, 40, 40), 0)
                 elif field.typ == GameFieldObjectType.FOOD:
                     pygame.draw.rect(screen, "green", (x * 40, y * 40 + 60, 40, 40), 0)
+        if not alive:
+            # Game Over anzeigen, weiss, roter hintergrund...
 
         pygame.display.flip()
 
