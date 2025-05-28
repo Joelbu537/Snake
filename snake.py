@@ -30,21 +30,22 @@ gameField = [
     [GameFieldObject(x, y, GameFieldObjectType.EMPTY, Direction.NONE) for x in range(30)]
     for y in range(24)
 ]
-class SnakePosition:
-    def __init__(self, coordinates, rotation):
-        self.coordinates = coordinates
-        self.rotation = rotation
-
+snake = [Coordinates(10, 10), Coordinates(9, 10), Coordinates(8, 10)]
 def new_food():
     is_valid = False
     global gameField
+    global snake
+    global foodCoords
+    temp_coords = Coordinates(0, 0)
     while not is_valid:
         temp_coords = Coordinates(random.randint(0, 29), random.randint(0, 23))
-        if gameField[temp_coords.x][temp_coords.y].typ ==  GameFieldObjectType.EMPTY:
-            print("Food set to " + str(temp_coords.x) + " " + str(temp_coords.y))
-            gameField[temp_coords.x][temp_coords.y].typ = GameFieldObjectType.FOOD
-            return temp_coords
-    return None
+        is_valid = True
+        for i in range(0, len(snake) - 1, 1):
+            if temp_coords.x == snake[i].x and temp_coords.y == snake[i].y:
+                is_valid = False
+    print("Food set to " + str(temp_coords.x) + " " + str(temp_coords.y))
+    foodCoords = temp_coords
+    return temp_coords
 
 
 foodCoords = new_food()
@@ -52,10 +53,6 @@ playerDirection = Direction.RIGHT
 alive = True
 ate_food = False
 score = 0
-snake = [SnakePosition(Coordinates(10, 10), Direction.RIGHT), SnakePosition(Coordinates(9, 10),Direction.RIGHT)]
-gameField[10][10] = GameFieldObject(10, 15, GameFieldObjectType.HEAD, Direction.RIGHT)
-gameField[9][10] = GameFieldObject(10, 15, GameFieldObjectType.SNAKE, Direction.RIGHT)
-gameField[8][10] = GameFieldObject(10, 15, GameFieldObjectType.SNAKE, Direction.RIGHT)
 
 
 def handle_input():
@@ -71,43 +68,51 @@ def handle_input():
         playerDirection = Direction.RIGHT
 
 def update_game_logic():
-    #  LOGIK HINZUFÜGEN!!!
-    # Food prüfen
+    #  Gehirn benutzen!!!
     global foodCoords
     global gameField
-    if snake[0].coordinates == foodCoords:
+    global ate_food
+    if ate_food:
+        new_snake_element = snake[len(snake) - 1]
+    else:
+        new_snake_element = Coordinates(-1, 0)
+
+    # Food prüfend
+    if snake[0].x == foodCoords.x and snake[0].y == foodCoords.y:
         print("Ate food")
         global score
-        global ate_food
         score += 1
         ate_food = True
         foodCoords = new_food()
     # Snake bewegen
-    # Von hinten nach vorne, letztes Element auf vorletztes setzen, so muss nur der Head berechnet werden
     print("The Snake is " + str(len(snake)) + " long")
     for i in range(len(snake) - 1, 0, -1):
-        print("Moving element " + str(i) + " from (" + str(snake[i].coordinates.x) + "|" + str(snake[i].coordinates.y) + ") ", end="")
-        snake[i].coordinates = Coordinates(snake[i - 1].coordinates.x, snake[i - 1].coordinates.y)
-        print("to (" + str(snake[i].coordinates.x) + "|" + str(snake[i].coordinates.y) + ")")
+        print("Moving element " + str(i) + " from (" + str(snake[i].x) + "|" + str(snake[i].y) + ") ", end="")
+        snake[i] = Coordinates(snake[i - 1].x, snake[i - 1].y)
+        print("to (" + str(snake[i].x) + "|" + str(snake[i].y) + ")")
+    if new_snake_element.x != -1:
+        snake.append(new_snake_element)
 
     # Kopf bewegen
     vector = Coordinates(0, 0)
-    if snake[0].rotation == Direction.UP:
+    if playerDirection == Direction.UP:
         vector = Coordinates(0, -1)
-    elif snake[0].rotation == Direction.DOWN:
+    elif playerDirection == Direction.DOWN:
         vector = Coordinates(0, 1)
-    elif snake[0].rotation == Direction.LEFT:
+    elif playerDirection == Direction.LEFT:
         vector = Coordinates(-1, 0)
-    elif snake[0].rotation == Direction.RIGHT:
+    elif playerDirection == Direction.RIGHT:
         vector = Coordinates(1, 0)
-    head_position = Coordinates(snake[0].coordinates.x + vector.x, snake[0].coordinates.y + vector.y)
+    head_position = Coordinates(snake[0].x + vector.x, snake[0].y + vector.y)
     global alive
     if head_position.x < 0 or head_position.x >= 30 or head_position.y < 0 or head_position.y >= 24:
         alive = False
     else:
-        snake[0].coordinates = head_position
+        print("Moving element 0 from (" + str(snake[0].x) + "|" + str(snake[0].y) + ") ", end="")
+        snake[0] = head_position
+        print("to (" + str(snake[0].x) + "|" + str(snake[0].y) + ")")
     for i in range(1, len(snake), 1):
-        if snake[i].coordinates == head_position:
+        if snake[i] == head_position:
             alive = False
     print(f"Direction: {playerDirection}")
 
@@ -124,10 +129,11 @@ def main():
     running = True
 
     logic_timer = 0
-    logic_interval = 1.0  # Updates/Sekunde, vielleicht 90° Parabel oder so?
+    logic_interval = 3 / len(snake)  # Updates/Sekunde, vielleicht 90° Parabel oder so?
 
     while running:
         dt = clock.tick(60) / 1000  # 60 FPS
+        logic_interval = 3 / len(snake) # FIX OMG
         logic_timer += dt
 
         for event in pygame.event.get():
@@ -145,8 +151,8 @@ def main():
         pygame.draw.rect(screen, "cyan", (0, 0, 1200, 60), 0)
         pygame.draw.rect(screen, "green", (foodCoords.x * 40, foodCoords.y * 40 + 60, 40, 40), 0)
         for i in range(1, len(snake), 1):
-            pygame.draw.rect(screen, "yellow", (snake[i].coordinates.x * 40, snake[i].coordinates.y * 40 + 60, 40, 40), 0)
-        pygame.draw.rect(screen, "red", (snake[0].coordinates.x * 40, snake[0].coordinates.y * 40 + 60, 40, 40), 0)
+            pygame.draw.rect(screen, "yellow", (snake[i].x * 40, snake[i].y * 40 + 60, 40, 40), 0)
+        pygame.draw.rect(screen, "red", (snake[0].x * 40, snake[0].y * 40 + 60, 40, 40), 0)
         if not alive:
             pass
             # Game Over anzeigen, weiss, roter hintergrund...
