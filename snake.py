@@ -44,7 +44,6 @@ def new_food():
             if temp_coords.x == snake[i].x and temp_coords.y == snake[i].y:
                 is_valid = False
     print("Food set to " + str(temp_coords.x) + " " + str(temp_coords.y))
-    foodCoords = temp_coords
     return temp_coords
 
 
@@ -74,6 +73,7 @@ def update_game_logic():
     global ate_food
     if ate_food:
         new_snake_element = snake[len(snake) - 1]
+        ate_food = False
     else:
         new_snake_element = Coordinates(-1, 0)
 
@@ -112,7 +112,6 @@ def update_game_logic():
     for i in range(1, len(snake), 1):
         if snake[i] == head_position:
             alive = False
-    print(f"Direction: {playerDirection}")
 
 
 
@@ -123,6 +122,7 @@ def main():
     pygame.display.set_caption("Snake")
     pygame.mouse.set_visible(True)
     font = pygame.font.SysFont(None, 48)
+    death_font = pygame.font.SysFont(None, 150)
 
     clock = pygame.time.Clock()
     running = True
@@ -150,9 +150,14 @@ def main():
         screen.fill("black")
         pygame.draw.rect(screen, "white", (0, 0, 1200, 60), 0)
 
-        score_text = font.render("Score: " + str(len(snake) - 3), True, (0, 0, 0))
+        score_text = font.render("Score:  " + str(len(snake) - 3), True, (0, 0, 0))
         time_in_seconds = (pygame.time.get_ticks() - start_time) // 1000
-        time_text = font.render("Time: " + str(time_in_seconds // 60) + ":" + str(time_in_seconds % 60), True, (0, 0, 0)) # Kann 0:2 anzeigen, muss gefixt werden
+        time_formatted = "Time:  " + str(time_in_seconds // 60)
+        if not (time_in_seconds % 60) >= 10:
+            time_formatted += ":0" + str(time_in_seconds % 60)
+        else:
+            time_formatted += ":" + str(time_in_seconds % 60)
+        time_text = font.render(time_formatted, True, (0, 0, 0)) # Kann 0:2 anzeigen, muss gefixt werden
         screen.blit(score_text, (1000, 12))
         screen.blit(time_text, (50, 12))
 
@@ -161,7 +166,9 @@ def main():
             pygame.draw.rect(screen, "yellow", (snake[i].x * 40, snake[i].y * 40 + 60, 40, 40), 0)
         pygame.draw.rect(screen, "red", (snake[0].x * 40, snake[0].y * 40 + 60, 40, 40), 0)
         if not alive:
-            pass
+            pygame.draw.rect(screen, "white", (0, 290, 1200, 200), 0)
+            death_text = death_font.render("GAME OVER", True, (255, 0, 0))
+            screen.blit(death_text, (300, 350))
             # Game Over anzeigen, weiss, roter hintergrund...
 
         pygame.display.flip()
