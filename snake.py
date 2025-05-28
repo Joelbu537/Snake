@@ -87,9 +87,7 @@ def update_game_logic():
     # Snake bewegen
     print("The Snake is " + str(len(snake)) + " long")
     for i in range(len(snake) - 1, 0, -1):
-        print("Moving element " + str(i) + " from (" + str(snake[i].x) + "|" + str(snake[i].y) + ") ", end="")
         snake[i] = Coordinates(snake[i - 1].x, snake[i - 1].y)
-        print("to (" + str(snake[i].x) + "|" + str(snake[i].y) + ")")
     if new_snake_element.x != -1:
         snake.append(new_snake_element)
 
@@ -124,6 +122,7 @@ def main():
     screen = pygame.display.set_mode((1200, 780))
     pygame.display.set_caption("Snake")
     pygame.mouse.set_visible(True)
+    font = pygame.font.SysFont(None, 48)
 
     clock = pygame.time.Clock()
     running = True
@@ -131,6 +130,7 @@ def main():
     logic_timer = 0
     logic_interval = 3 / len(snake)  # Updates/Sekunde, vielleicht 90° Parabel oder so?
 
+    start_time = pygame.time.get_ticks()
     while running:
         dt = clock.tick(60) / 1000  # 60 FPS
         logic_interval = 3 / len(snake) # FIX OMG
@@ -148,7 +148,14 @@ def main():
 
         # Fenster füllen
         screen.fill("black")
-        pygame.draw.rect(screen, "cyan", (0, 0, 1200, 60), 0)
+        pygame.draw.rect(screen, "white", (0, 0, 1200, 60), 0)
+
+        score_text = font.render("Score: " + str(len(snake) - 3), True, (0, 0, 0))
+        time_in_seconds = (pygame.time.get_ticks() - start_time) // 1000
+        time_text = font.render("Time: " + str(time_in_seconds // 60) + ":" + str(time_in_seconds % 60), True, (0, 0, 0)) # Kann 0:2 anzeigen, muss gefixt werden
+        screen.blit(score_text, (1000, 12))
+        screen.blit(time_text, (50, 12))
+
         pygame.draw.rect(screen, "green", (foodCoords.x * 40, foodCoords.y * 40 + 60, 40, 40), 0)
         for i in range(1, len(snake), 1):
             pygame.draw.rect(screen, "yellow", (snake[i].x * 40, snake[i].y * 40 + 60, 40, 40), 0)
