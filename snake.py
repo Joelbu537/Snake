@@ -26,7 +26,10 @@ class Coordinates:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-
+gameField = [
+    [GameFieldObject(x, y, GameFieldObjectType.EMPTY, Direction.NONE) for x in range(30)]
+    for y in range(24)
+]
 class SnakePosition:
     def __init__(self, coordinates, rotation):
         self.coordinates = coordinates
@@ -34,6 +37,7 @@ class SnakePosition:
 
 def new_food():
     is_valid = False
+    global gameField
     while not is_valid:
         temp_coords = Coordinates(random.randint(0, 29), random.randint(0, 23))
         if gameField[temp_coords.x][temp_coords.y].typ ==  GameFieldObjectType.EMPTY:
@@ -47,10 +51,6 @@ alive = True
 ate_food = False
 score = 0
 snake = [SnakePosition(Coordinates(10, 10), Direction.RIGHT), SnakePosition(Coordinates(9, 10),Direction.RIGHT)]
-gameField = [
-    [GameFieldObject(x, y, GameFieldObjectType.EMPTY, Direction.NONE) for x in range(30)]
-    for y in range(24)
-]
 gameField[10][10] = GameFieldObject(10, 15, GameFieldObjectType.HEAD, Direction.RIGHT)
 gameField[9][10] = GameFieldObject(10, 15, GameFieldObjectType.SNAKE, Direction.RIGHT)
 gameField[8][10] = GameFieldObject(10, 15, GameFieldObjectType.SNAKE, Direction.RIGHT)
@@ -68,17 +68,26 @@ def handle_input():
     elif keys[pygame.K_d] and playerDirection != Direction.LEFT:
         playerDirection = Direction.RIGHT
 
-def update_game_logic(gameField):
+def update_game_logic():
     #  LOGIK HINZUFÜGEN!!!
     # Food prüfen
-    if snake[0].coordinates == foodCords:
+    print("Called")
+    global foodCoords
+    global gameField
+    if snake[0].coordinates == foodCoords:
+        print("ate food")
+        global score
+        global ate_food
         score += 1
         ate_food = True
-        foodCords = new_food()
+        foodCoords = new_food()
     # Snake bewegen
     # Von hinten nach vorne, letztes Element auf vorletztes setzen, so muss nur der Head berechnet werden
-    for i in range(len(snake), 1, -1):
+    print("Still called, params are " + str(len(snake) - 1) + ", 1, -1")
+    for i in range(len(snake) - 1, 0, -1):
+        print("Moving element " + str(i) + " from (" + str(snake[i].coordinates.x) + "|" + str(snake[i].coordinates.y) + ") ", end="")
         snake[i].coordinates = snake[i - 1].coordinates
+        print("to (" + str(snake[i].coordinates.x) + "|" + str(snake[i].coordinates.y) + ")")
 
     # Kopf bewegen
     vector = Coordinates(0, 0)
@@ -91,7 +100,7 @@ def update_game_logic(gameField):
     elif snake[0].rotation == Direction.RIGHT:
         vector = Coordinates(1, 0)
     head_position = Coordinates(snake[0].coordinates.x + vector.x, snake[0].coordinates.y + vector.y)
-    if head_position.x < 0 or head_position.x >= 30 or head_position.y < 0 or head_position >= 24:
+    if head_position.x < 0 or head_position.x >= 30 or head_position.y < 0 or head_position.y >= 24:
         alive = False
     for i in range(1, len(snake), 1):
         if snake[i].coordinates == head_position:
@@ -124,7 +133,7 @@ def main():
             handle_input()  # Läuft mit 60 FPS
 
         if logic_timer >= logic_interval:
-            update_game_logic(gameField)
+            update_game_logic()
             logic_timer = 0  # Reset Timer
 
         # Fenster füllen
@@ -140,6 +149,7 @@ def main():
                 elif field.typ == GameFieldObjectType.FOOD:
                     pygame.draw.rect(screen, "green", (x * 40, y * 40 + 60, 40, 40), 0)
         if not alive:
+            pass
             # Game Over anzeigen, weiss, roter hintergrund...
 
         pygame.display.flip()
