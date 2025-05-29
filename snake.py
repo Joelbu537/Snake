@@ -52,6 +52,9 @@ playerDirection = Direction.RIGHT
 alive = True
 ate_food = False
 score = 0
+pygame.mixer.init(frequency=22050, size=-16, channels=16, buffer=4096)
+food_sound = pygame.mixer.Sound("sounds\\food.mp3")
+move_sound = pygame.mixer.Sound("sounds\\move.mp3")
 
 
 def handle_input():
@@ -79,6 +82,8 @@ def update_game_logic():
 
     # Food prüfend
     if snake[0].x == foodCoords.x and snake[0].y == foodCoords.y:
+        global food_sound
+        food_sound.play()
         print("Ate food")
         global score
         score += 1
@@ -109,6 +114,7 @@ def update_game_logic():
         print("Moving element 0 from (" + str(snake[0].x) + "|" + str(snake[0].y) + ") ", end="")
         snake[0] = head_position
         print("to (" + str(snake[0].x) + "|" + str(snake[0].y) + ")")
+        move_sound.play()
     for i in range(1, len(snake), 1):
         if snake[i] == head_position:
             alive = False
@@ -131,6 +137,8 @@ def main():
     logic_interval = 3 / len(snake)  # Updates/Sekunde, vielleicht 90° Parabel oder so?
 
     start_time = pygame.time.get_ticks()
+    game_music = pygame.mixer.Sound("sounds\\music.mp3")
+    game_music.play(loops=-1)
     while running:
         dt = clock.tick(60) / 1000  # 60 FPS
         logic_interval = 3 / len(snake) # FIX OMG
@@ -166,6 +174,7 @@ def main():
             pygame.draw.rect(screen, "yellow", (snake[i].x * 40, snake[i].y * 40 + 60, 40, 40), 0)
         pygame.draw.rect(screen, "red", (snake[0].x * 40, snake[0].y * 40 + 60, 40, 40), 0)
         if not alive:
+            game_music.stop()
             pygame.draw.rect(screen, "white", (0, 290, 1200, 200), 0)
             death_text = death_font.render("GAME OVER", True, (255, 0, 0))
             screen.blit(death_text, (300, 350))
