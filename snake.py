@@ -28,7 +28,7 @@ class Coordinates:
         self.y = y
 gameField = [
     [GameFieldObject(x, y, GameFieldObjectType.EMPTY, Direction.NONE) for x in range(30)]
-    for y in range(24)
+    for y in range(18)
 ]
 snake = [Coordinates(10, 10), Coordinates(9, 10), Coordinates(8, 10)]
 def new_food():
@@ -38,7 +38,7 @@ def new_food():
     global foodCoords
     temp_coords = Coordinates(0, 0)
     while not is_valid:
-        temp_coords = Coordinates(random.randint(0, 29), random.randint(0, 23))
+        temp_coords = Coordinates(random.randint(0, 29), random.randint(0, 17))
         is_valid = True
         for i in range(0, len(snake) - 1, 1):
             if temp_coords.x == snake[i].x and temp_coords.y == snake[i].y:
@@ -103,7 +103,7 @@ def update_game_logic():
         vector = Coordinates(1, 0)
     head_position = Coordinates(snake[0].x + vector.x, snake[0].y + vector.y)
     global alive
-    if head_position.x < 0 or head_position.x >= 30 or head_position.y < 0 or head_position.y >= 24:
+    if head_position.x < 0 or head_position.x >= 30 or head_position.y < 0 or head_position.y >= 18:
         alive = False
     else:
         print("Moving element 0 from (" + str(snake[0].x) + "|" + str(snake[0].y) + ") ", end="")
