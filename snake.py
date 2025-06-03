@@ -55,6 +55,7 @@ score = 0
 pygame.mixer.init(frequency=22050, size=-16, channels=16, buffer=4096)
 food_sound = pygame.mixer.Sound("sounds\\food.mp3")
 move_sound = pygame.mixer.Sound("sounds\\move.mp3")
+head_position = Coordinates(-1, -1)
 
 
 def handle_input():
@@ -73,28 +74,12 @@ def update_game_logic():
     #  Gehirn benutzen!!!
     global foodCoords
     global gameField
-    global ate_food
-    if ate_food:
-        new_snake_element = snake[len(snake) - 1]
-        ate_food = False
-    else:
-        new_snake_element = Coordinates(-1, 0)
 
-    # Food prüfend
-    if snake[0].x == foodCoords.x and snake[0].y == foodCoords.y:
-        global food_sound
-        food_sound.play()
-        print("Ate food")
-        global score
-        score += 1
-        ate_food = True
-        foodCoords = new_food()
     # Snake bewegen
     print("The Snake is " + str(len(snake)) + " long")
     for i in range(len(snake) - 1, 0, -1):
         snake[i] = Coordinates(snake[i - 1].x, snake[i - 1].y)
-    if new_snake_element.x != -1:
-        snake.append(new_snake_element)
+
 
     # Kopf bewegen
     vector = Coordinates(0, 0)
@@ -106,6 +91,7 @@ def update_game_logic():
         vector = Coordinates(-1, 0)
     elif playerDirection == Direction.RIGHT:
         vector = Coordinates(1, 0)
+    global head_position
     head_position = Coordinates(snake[0].x + vector.x, snake[0].y + vector.y)
     global alive
     if head_position.x < 0 or head_position.x >= 30 or head_position.y < 0 or head_position.y >= 18:
@@ -115,11 +101,6 @@ def update_game_logic():
         snake[0] = head_position
         print("to (" + str(snake[0].x) + "|" + str(snake[0].y) + ")")
         move_sound.play()
-    for i in range(1, len(snake), 1):
-        if snake[i] == head_position:
-            alive = False
-
-
 
 def main():
     global playerDirection
@@ -139,6 +120,7 @@ def main():
     start_time = pygame.time.get_ticks()
     game_music = pygame.mixer.Sound("sounds\\music.mp3")
     game_music.play(loops=-1)
+    global alive
     while running:
         dt = clock.tick(60) / 1000  # 60 FPS
         logic_interval = 3 / len(snake) # FIX OMG
@@ -153,6 +135,33 @@ def main():
         if logic_timer >= logic_interval and alive:
             update_game_logic()
             logic_timer = 0  # Reset Timer
+
+        global ate_food
+        if ate_food:
+            new_snake_element = snake[len(snake) - 1]
+            ate_food = False
+        else:
+            new_snake_element = Coordinates(-1, 0)
+
+        if new_snake_element.x != -1:
+            snake.append(new_snake_element)
+
+        # Food prüfend
+        global foodCoords
+        if snake[0].x == foodCoords.x and snake[0].y == foodCoords.y:
+            global food_sound
+            food_sound.play()
+            print("Ate food")
+            global score
+            score += 1
+            ate_food = True
+            foodCoords = new_food()
+
+        global head_position
+        for i in range(1, len(snake), 1):
+            if snake[i].x == head_position.x and snake[i].y == head_position.y:
+                print("Hit")
+                alive = False
 
         # Fenster füllen
         screen.fill("black")
