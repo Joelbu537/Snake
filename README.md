@@ -1,9 +1,9 @@
 # Dokumentation 
 ## Variablen
-´´´isAlive´´´ gibt an, ob der Spieler lebt, und ob das Spiel weiterlaufen soll.
-´´´foodCords´´´ die Position, auf der der einzusammelnde Punkt liegt.
-´´´snake´´´ ein Array, welches die Koordinaten der einzelnden Schlangenelemente beinhaltet. snake[0] ist der Kopf der Schlange.
-´´´playerDirection´´´ Die Richtung in die sich die Schlange beim nächsten Zug bewegt.
+```isAlive``` gibt an, ob der Spieler lebt, und ob das Spiel weiterlaufen soll.
+```foodCords``` die Position, auf der der einzusammelnde Punkt liegt.
+```snake``` ein Array, welches die Koordinaten der einzelnden Schlangenelemente beinhaltet. snake[0] ist der Kopf der Schlange.
+```playerDirection``` Die Richtung in die sich die Schlange beim nächsten Zug bewegt.
 ## Funktionen 
 ### ´´´main()´´´
 Der Kern des Programms. Diese Funktion hat verschiedene Aufgaben:
