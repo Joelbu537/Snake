@@ -123,7 +123,10 @@ def main():
     global alive
     while running:
         dt = clock.tick(60) / 1000  # 60 FPS
-        logic_interval = 3 / len(snake) # FIX OMG
+        if (2 - (0.15*len(snake))) > 0.15:
+            logic_interval = 1.6 - (0.15*len(snake))
+        else:
+            logic_interval = 0.15
         logic_timer += dt
 
         for event in pygame.event.get():
