@@ -119,6 +119,8 @@ def main():
 
     start_time = pygame.time.get_ticks()
     game_music = pygame.mixer.Sound("sounds\\music.mp3")
+    food_image = pygame.image.load("images\\apple.png")
+    foodrect = food_image.get_rect()
     game_music.play(loops=-1)
     global alive
     time_text = ""
@@ -183,7 +185,10 @@ def main():
         screen.blit(score_text, (1000, 12))
         screen.blit(time_text, (50, 12))
 
-        pygame.draw.rect(screen, "green", (foodCoords.x * 40, foodCoords.y * 40 + 60, 40, 40), 0)
+        foodrect.x = foodCoords.x * 40
+        foodrect.y = foodCoords.y * 40
+        screen.blit(food_image, foodrect)
+        #pygame.draw.rect(screen, "green", (foodCoords.x * 40, foodCoords.y * 40 + 60, 40, 40), 0)
         for i in range(1, len(snake), 1):
             pygame.draw.rect(screen, "yellow", (snake[i].x * 40, snake[i].y * 40 + 60, 40, 40), 0)
         pygame.draw.rect(screen, "red", (snake[0].x * 40, snake[0].y * 40 + 60, 40, 40), 0)
