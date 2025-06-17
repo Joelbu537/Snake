@@ -121,6 +121,7 @@ def main():
     game_music = pygame.mixer.Sound("sounds\\music.mp3")
     game_music.play(loops=-1)
     global alive
+    time_text = ""
     while running:
         dt = clock.tick(60) / 1000  # 60 FPS
         if (2 - (0.15*len(snake))) > 0.15:
@@ -177,7 +178,8 @@ def main():
             time_formatted += ":0" + str(time_in_seconds % 60)
         else:
             time_formatted += ":" + str(time_in_seconds % 60)
-        time_text = font.render(time_formatted, True, (0, 0, 0)) # Kann 0:2 anzeigen, muss gefixt werden
+        if alive:
+            time_text = font.render(time_formatted, True, (0, 0, 0)) # Kann 0:2 anzeigen, muss gefixt werden
         screen.blit(score_text, (1000, 12))
         screen.blit(time_text, (50, 12))
 
