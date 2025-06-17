@@ -97,7 +97,7 @@ def update_game_logic():
     if head_position.x < 0 or head_position.x >= 30 or head_position.y < 0 or head_position.y >= 18:
         alive = False
     else:
-        print("Moving element 0 from (" + str(snake[0].x) + "|" + str(snake[0].y) + ") ", end="")
+        print("Moving head from (" + str(snake[0].x) + "|" + str(snake[0].y) + ") ", end="")
         snake[0] = head_position
         print("to (" + str(snake[0].x) + "|" + str(snake[0].y) + ")")
         move_sound.play()
