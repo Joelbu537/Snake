@@ -1,8 +1,14 @@
 # Dokumentation 
+## Funktion
+Das Spiel läuft mit 60 Frames per Second, nach jedem Frame werden Benutzereingaben verarbeitet, und das nächste Frame erstellt.
+Da sich die Snake nicht kontinuierlich, sondern mit schrittartigen Bewegungen fortbewegt, wird die Position der Schlange nur alle {```logic_interval```} Sekunden mit Hilfe von ```playerDirection``` bewegt.
+Nach jeder Bewegung wird geprüft, ob die Koordinaten von ```head_position``` ausserhalb des Spielfeldes oder gleich denen eines Körperelements sind. Ist dies der Fall, wird ```isAlive``` = ```false``` gesetzt.  
 ## Wichtige Variablen
 ```isAlive```       gibt an, ob der Spieler lebt, und ob das Spiel weiterlaufen soll.  
+```logic_interval``` legt fest, wie oft die Schlange pro Sekunde bewegt wird.  
 ```foodCords```     die Position, auf der der einzusammelnde Punkt liegt.  
-```snake```         ein Array, welches die Koordinaten der einzelnden Schlangenelemente beinhaltet. snake[0] ist der Kopf der Schlange.  
+```snake```         ist ein Array, welches die Koordinaten der einzelnden Schlangenelemente beinhaltet. snake[0] ist der Kopf der Schlange, der Rest Teile des Körpers.  
+```head_position``` Die Koordinaten des Kopfs.  
 ```playerDirection```    Die Richtung in die sich die Schlange beim nächsten Zug bewegt.  
 ```gameField```          Ein 2D-Array, welches das Spielfeld darstellt.
 ```ateFood```            Zeigt, ob im letzten Zug ein Punkt gesammelt wurde.
@@ -10,12 +16,12 @@
   
 ## Wichtige Klassen
 > [!CAUTION]
-> Da ich mich inmitten des Programmierens die Art und Weise meines Vorgehens geändert habe,
-> werden einige Klassen oder Teile davon nicht verwendet.
+> Da ich inmitten des Programmierens die Art und Weise meines Vorgehens geändert habe,
+> werden einige Klassen oder Teile von Klassen nicht mehr verwendet.
 ### Direction
 Speichert eine Richtung
 ### Coordinates
-Zwei Integer, die Koordinaten darstellen
+Zwei Zahlen, die Koordinaten darstellen
 ### GameFieldObject
 Ein Feld auf der Spielfläche.
 Enthält seine eigenen Koordinaten, welchem Typ es entspricht, und, wenn nötig, eine Richtung.
