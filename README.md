@@ -1,7 +1,7 @@
 # Dokumentation 
 ## Funktion
-Das Spiel läuft mit 60 Frames per Second, nach jedem Frame werden Benutzereingaben verarbeitet, und das nächste Frame erstellt.
-Da sich die Snake nicht kontinuierlich, sondern mit schrittartigen Bewegungen fortbewegt, wird die Position der Schlange nur alle {```logic_interval```} Sekunden mit Hilfe von ```playerDirection``` bewegt.
+Das Spiel läuft mit 60 Frames per Second, nach jedem Frame werden Benutzereingaben verarbeitet, und das nächste Frame erstellt.  
+Da sich die Snake nicht kontinuierlich, sondern mit schrittartigen Bewegungen fortbewegt, wird die Position der Schlange nur alle ```logic_interval``` Sekunden mit Hilfe von ```playerDirection``` bewegt.
 Nach jeder Bewegung wird geprüft, ob die Koordinaten von ```head_position``` ausserhalb des Spielfeldes oder gleich denen eines Körperelements sind. Ist dies der Fall, wird ```isAlive``` = ```false``` gesetzt.  
 ## Wichtige Variablen
 ```isAlive```       gibt an, ob der Spieler lebt, und ob das Spiel weiterlaufen soll.  
