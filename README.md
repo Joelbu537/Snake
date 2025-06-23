@@ -31,7 +31,7 @@ Bestimmt, was ein GameFieldObject enthält.
 ### ```main()```
 Der Kern des Programms. Diese Funktion hat verschiedene Aufgaben:
  - Das Zeichnen der Grafik. Die gespeicherten Koordinaten aus ```gameField``` werden im Fenster als Quadrate mit verschiedenen Farben gezeichnet.  
- - Die Geschwindigkeit der Schlange anpassen, indem die Zeit zwischen den Aufrufen von ```update_game_logic``` verkürzt wird.  
+ - Die Geschwindigkeit der Schlange anpassen, indem ```logic_interval``` erhöht wird.  
  - Prüfen, ob die Schlange einen Punkt gesammelt hat. Wenn ja, wird ```new_food``` aufgerufen, um einen neuen Punkt zu generieren, und der Score/die Schlangenläng wird um 1 inkrementiert.  
  - 
 ### ```handle_input()```
